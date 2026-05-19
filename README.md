@@ -1,109 +1,70 @@
 # vibeopsOS
 
-**Ubuntu x OpenCode - Development Environment Out of the Box**
+**Ubuntu x OpenCode — Development Environment Out of the Box**
 
-vibeopsOS is a customized Ubuntu distribution with OpenCode AI coding agent pre-installed and ready to go.
-
-## Why vibeopsOS?
-
-- **Out of the Box** - OpenCode is pre-configured, no manual setup needed
-- **Smart Onboarding** - Project templates guide you through creating your first project
-- **Developer Ready** - User has sudo without password, perfect for local development
-- **AI-Powered** - Every project starts with AI assistance via OpenCode
+vibeopsOS is a customized Ubuntu 24.04 distribution with the OpenCode AI coding agent pre-installed and ready on first login.
 
 ## Quick Start
-
-1. Download the ISO
-2. Boot from USB/CD
-3. Install Ubuntu as usual
-4. Login
-5. OpenCode auto-installs on first login
-6. Follow the welcome wizard to create your first project
-
-## Features
-
-### Pre-Installed OpenCode
-OpenCode AI coding agent is ready immediately. Run `opencode .` in any project directory.
-
-### Project Templates
-Choose from pre-configured project templates:
-- **Web** - Node.js, TypeScript, Next.js/Express
-- **Python** - Python 3.12+, Poetry, pytest
-- **General** - For any other project type
-
-### Auto-Configuration
-- User sudo without password
-- sensible defaults
-- Clean project structure
-
-## Installation
-
-### Build from Source
-
-Requirements:
-- Ubuntu 24.04
-- `xorriso`
-- `wget`
-- Internet connection
 
 ```bash
 git clone https://github.com/vibeopsde/vibeopsOS.git
 cd vibeopsOS/build
-sudo ./build-iso.sh
+sudo ./build-iso.sh        # → vibeopsOS.iso
+sudo dd if=vibeopsOS.iso of=/dev/sdX bs=4M
+# Boot, install Ubuntu, login — OpenCode is ready.
 ```
 
-The resulting ISO will be `vibeopsOS.iso` in the current directory.
+## Features
 
-### Using the ISO
+- **OpenCode pre-installed** — auto-installs via the one-shot init service on first boot
+- **Sudo without password** — configured automatically for the primary user
+- **Project templates** — web (Next.js/TS), Python (Poetry/pytest), general-purpose scaffold
+- **One-shot systemd service** — runs once, then removes itself (`/etc/vibeops-initialized` sentinel)
+- **OpenCode agent config** — global `agents.md` symlinked into `~/.config/opencode/`
 
-1. Flash to USB: `sudo dd if=vibeopsOS.iso of=/dev/sdX bs=4M`
-2. Boot from USB
-3. Install Ubuntu
-4. Done
-
-## Project Structure
-
-After installation, your home directory contains:
+## What Gets Installed
 
 ```
 ~/vibeops/
-├── agents.md              # Global OpenCode instructions
-├── projects/
-│   ├── web/              # Web project template
-│   ├── python/           # Python project template
-│   └── general/          # General project template
-└── onboarding/
-    └── welcome.sh        # First-run wizard
+└── templates/
+    ├── agents.md              # Global OpenCode instructions
+    ├── web/                   # Next.js + TypeScript scaffold
+    ├── python/                # Poetry + pytest scaffold
+    └── general/               # Minimal README scaffold
+```
+
+On first boot the welcome wizard prompts to copy a template into `~/projects/`.
+
+## Build Requirements
+
+- Ubuntu 24.04
+- `xorriso`, `wget`, `squashfs-tools`, `rsync`
+- ~6 GB disk for the Ubuntu base ISO + workspace
+
+## Project Structure
+
+```
+build/
+  build-iso.sh           # Downloads Ubuntu ISO, patches squashfs, repacks
+package/
+  vibeops.service        # One-shot systemd unit
+  vibeops-init.sh        # First-boot init: sudo, opencode, templates, onboarding
+  onboarding/
+    welcome.sh           # Interactive project-type picker
+  templates/
+    agents.md            # Global agent config
+    web/                 # Next.js template (package.json, tsconfig.json, agents.md)
+    python/              # Poetry template (pyproject.toml, agents.md)
+    general/             # Barebones README scaffold
 ```
 
 ## Customization
 
-### Adding Custom agents.md
-
-Edit `~/vibeops/agents.md` to customize OpenCode behavior for all projects.
-
-To customize per project type, edit the respective `agents.md` in `~/vibeops/projects/<type>/`.
-
-### Modifying the Build
-
-Edit files in `package/` before running `build-iso.sh`:
-
-- `vibeops.service` - Systemd service
-- `vibeops-init.sh` - Initialization script
-- `templates/` - Project templates and agents
-
-## Tech Stack
-
-- **Base**: Ubuntu 24.04 LTS
-- **AI**: OpenCode (opencode.ai)
-- **Install**: Standard Ubuntu installer
+Edit files in `package/` before building:
+- `package/vibeops-init.sh` — change what runs on first boot
+- `package/templates/agents.md` — change the global OpenCode agent instructions
+- `package/templates/<type>/` — add/remove project templates
 
 ## License
 
 MIT
-
-## Links
-
-- [OpenCode](https://opencode.ai)
-- [Ubuntu](https://ubuntu.com)
-- [GitHub](https://github.com/vibeopsde/vibeopsOS)

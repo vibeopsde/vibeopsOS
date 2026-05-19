@@ -1,6 +1,7 @@
 [Unit]
 Description=vibeopsOS First Boot Setup
-After=default.target
+After=network.target network-online.target
+Wants=network.target network-online.target
 ConditionPathExists=!/etc/vibeops-initialized
 
 [Service]
@@ -9,4 +10,4 @@ RemainAfterExit=yes
 ExecStart=/opt/vibeops/vibeops-init.sh
 
 [Install]
-WantedBy=default.target
+WantedBy=multi-user.target
