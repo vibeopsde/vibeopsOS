@@ -1,0 +1,12 @@
+[Unit]
+Description=vibeopsOS First Boot Setup
+After=default.target
+ConditionPathExists=!/etc/vibeops-initialized
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/opt/vibeops/vibeops-init.sh
+
+[Install]
+WantedBy=default.target
