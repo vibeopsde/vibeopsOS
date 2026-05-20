@@ -1,13 +1,15 @@
 #!/bin/bash
 set -e
 
-ISO_OUT="vibeopsOS.iso"
+TIMESTAMP=$(date +%y%m%d%H)
+ISO_OUT="vibeopsOS_v${TIMESTAMP}.iso"
 ISO_URL="https://cdimage.ubuntu.com/releases/26.04/release/ubuntu-26.04-live-server-arm64.iso"
 WORK_DIR="/tmp/vibeops-build"
 SQUASHFS_DIR="/tmp/vibeops-squashfs"
 ISO_MOUNT="/tmp/vibeops-iso-mount"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
+BASE_ISO="$REPO_ROOT/ubuntu.iso"
 
 echo "[*] Building viveopsOS ISO"
 
@@ -20,13 +22,15 @@ command -v rsync       >/dev/null 2>&1 || { echo "ERROR: rsync required"; exit 1
 rm -rf "$WORK_DIR" "$SQUASHFS_DIR" "$ISO_MOUNT"
 mkdir -p "$WORK_DIR" "$SQUASHFS_DIR" "$ISO_MOUNT"
 
-if [ ! -f ubuntu.iso ]; then
+if [ ! -f "$BASE_ISO" ]; then
     echo "[*] Downloading base ISO..."
-    wget -q --show-progress "$ISO_URL" -O ubuntu.iso
+    wget -q --show-progress "$ISO_URL" -O "$BASE_ISO"
+else
+    echo "[*] Using existing base ISO: $BASE_ISO"
 fi
 
 echo "[*] Mounting ISO..."
-sudo mount -o loop ubuntu.iso "$ISO_MOUNT"
+sudo mount -o loop "$BASE_ISO" "$ISO_MOUNT"
 
 SQUASHFS_FILE=$(ls "$ISO_MOUNT/casper/"*.squashfs 2>/dev/null | head -1 | xargs basename)
 if [ -z "$SQUASHFS_FILE" ]; then

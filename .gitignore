@@ -1,6 +1,2 @@
 # Build artifacts
 *.iso
-build/ubuntu.iso
-build/vibeopsOS.iso
-
-
