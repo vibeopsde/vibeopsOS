@@ -44,15 +44,13 @@ sudo unsquashfs -d "$SQUASHFS_DIR" "$ISO_MOUNT/casper/$SQUASHFS_FILE"
 sudo umount "$ISO_MOUNT"
 rm -rf "$ISO_MOUNT"
 
-echo "[*] Injecting viveopsOS..."
-sudo cp "$REPO_ROOT/package/vibeops-init.sh" "$SQUASHFS_DIR/opt/vibeops-init.sh"
-sudo chmod +x "$SQUASHFS_DIR/opt/vibeops-init.sh"
+echo "[*] Injecting viveopsOS profile script..."
+sudo cp "$REPO_ROOT/package/vibeops-init.sh" "$SQUASHFS_DIR/etc/profile.d/vibeops-init.sh"
+sudo chmod +x "$SQUASHFS_DIR/etc/profile.d/vibeops-init.sh"
 
-echo "[*] Installing systemd service..."
-sudo cp "$REPO_ROOT/package/vibeops.service" "$SQUASHFS_DIR/etc/systemd/system/vibeops.service"
-sudo mkdir -p "$SQUASHFS_DIR/etc/systemd/system/multi-user.target.wants"
-sudo ln -sf /etc/systemd/system/vibeops.service \
-    "$SQUASHFS_DIR/etc/systemd/system/multi-user.target.wants/vibeops.service"
+echo "[*] Cleaning up old systemd service (if present)..."
+sudo rm -f "$SQUASHFS_DIR/etc/systemd/system/vibeops.service" \
+           "$SQUASHFS_DIR/etc/systemd/system/multi-user.target.wants/vibeops.service" 2>/dev/null || true
 
 echo "[*] Rebuilding squashfs..."
 sudo mksquashfs "$SQUASHFS_DIR" "$WORK_DIR/casper/$SQUASHFS_FILE" -comp xz -noappend

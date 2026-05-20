@@ -1,8 +1,6 @@
 # Build artifacts
-build/
 *.iso
-ubuntu.iso
-vibeopsOS.iso
+build/ubuntu.iso
+build/vibeopsOS.iso
 
-# Temp
-install.sh
+
