@@ -21,8 +21,5 @@ fi
 echo "[*] Running install.sh..."
 bash "$REPO_DIR/install.sh"
 
-echo "[*] Installing OpenCode..."
-curl -fsSL https://opencode.ai/install | bash
-
 touch "$SENTINEL"
 echo "[*] Setup complete! Open a new shell or run: exec bash"
