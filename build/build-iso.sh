@@ -10,8 +10,11 @@ REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 
 echo "[*] Building vibeopsOS ISO"
 
-command -v wget >/dev/null 2>&1 || { echo "ERROR: wget required"; exit 1; }
-command -v xorriso >/dev/null 2>&1 || { echo "ERROR: xorriso required"; exit 1; }
+command -v wget       >/dev/null 2>&1 || { echo "ERROR: wget required"; exit 1; }
+command -v xorriso     >/dev/null 2>&1 || { echo "ERROR: xorriso required"; exit 1; }
+command -v unsquashfs  >/dev/null 2>&1 || { echo "ERROR: squashfs-tools required"; exit 1; }
+command -v mksquashfs  >/dev/null 2>&1 || { echo "ERROR: squashfs-tools required"; exit 1; }
+command -v rsync       >/dev/null 2>&1 || { echo "ERROR: rsync required"; exit 1; }
 
 rm -rf "$WORK_DIR" "$SQUASHFS_DIR" "$ISO_MOUNT"
 mkdir -p "$WORK_DIR" "$SQUASHFS_DIR" "$ISO_MOUNT"
@@ -26,15 +29,16 @@ sudo mount -o loop ubuntu.iso "$ISO_MOUNT"
 
 echo "[*] Copying ISO contents (excluding squashfs)..."
 rsync -av --exclude='casper/filesystem.squashfs' "$ISO_MOUNT/" "$WORK_DIR/" >/dev/null
-sudo umount "$ISO_MOUNT"
 
 echo "[*] Extracting squashfs filesystem..."
-sudo unsquashfs -d "$SQUASHFS_DIR" "$ISO_MOUNT/casper/filesystem.squashfs" 2>/dev/null || true
-if [ ! -f "$ISO_MOUNT"/casper/filesystem.squashfs ]; then
+if [ ! -f "$ISO_MOUNT/casper/filesystem.squashfs" ]; then
     echo "ERROR: squashfs not found in ISO"
+    sudo umount "$ISO_MOUNT"
     exit 1
 fi
-sudo unsquashfs -d "$SQUASHFS_DIR" "$ISO_MOUNT"/casper/filesystem.squashfs
+sudo unsquashfs -d "$SQUASHFS_DIR" "$ISO_MOUNT/casper/filesystem.squashfs"
+
+sudo umount "$ISO_MOUNT"
 rm -rf "$ISO_MOUNT"
 
 echo "[*] Injecting vibeopsOS files into filesystem..."

@@ -4,6 +4,8 @@
 
 vibeopsOS is a customized Ubuntu 24.04 distribution with the OpenCode AI coding agent pre-installed and ready on first login.
 
+vibeopsOS is not affiliated with, endorsed by, or connected to the OpenCode project (anomalyco) or Canonical Ltd.
+
 ## Quick Start
 
 ```bash
