@@ -21,22 +21,26 @@ mkdir -p "$WORK_DIR" "$SQUASHFS_DIR" "$ISO_MOUNT"
 
 echo "[*] Downloading Ubuntu 24.04 base ISO..."
 if [ ! -f ubuntu.iso ]; then
-    wget -q --show-progress https://releases.ubuntu.com/24.04/ubuntu-24.04-desktop-amd64.iso -O ubuntu.iso
+    wget -q --show-progress https://old-releases.ubuntu.com/releases/24.04/ubuntu-24.04-live-server-arm64.iso -O ubuntu.iso
 fi
 
 echo "[*] Mounting ISO..."
 sudo mount -o loop ubuntu.iso "$ISO_MOUNT"
 
-echo "[*] Copying ISO contents (excluding squashfs)..."
-rsync -av --exclude='casper/filesystem.squashfs' "$ISO_MOUNT/" "$WORK_DIR/" >/dev/null
-
-echo "[*] Extracting squashfs filesystem..."
-if [ ! -f "$ISO_MOUNT/casper/filesystem.squashfs" ]; then
-    echo "ERROR: squashfs not found in ISO"
+echo "[*] Detecting squashfs file..."
+SQUASHFS_FILE=$(ls "$ISO_MOUNT/casper/"*.squashfs 2>/dev/null | head -1 | xargs basename)
+if [ -z "$SQUASHFS_FILE" ]; then
+    echo "ERROR: no .squashfs found in casper/"
     sudo umount "$ISO_MOUNT"
     exit 1
 fi
-sudo unsquashfs -d "$SQUASHFS_DIR" "$ISO_MOUNT/casper/filesystem.squashfs"
+echo "[*] Found: casper/$SQUASHFS_FILE"
+
+echo "[*] Copying ISO contents (excluding squashfs)..."
+rsync -av --exclude="casper/$SQUASHFS_FILE" "$ISO_MOUNT/" "$WORK_DIR/" >/dev/null
+
+echo "[*] Extracting squashfs filesystem..."
+sudo unsquashfs -d "$SQUASHFS_DIR" "$ISO_MOUNT/casper/$SQUASHFS_FILE"
 
 sudo umount "$ISO_MOUNT"
 rm -rf "$ISO_MOUNT"
@@ -73,19 +77,44 @@ find . -type f -not -path './md5sum.txt' -not -path './isolinux/*' \
 cd "$OLDPWD"
 
 echo "[*] Creating ISO..."
-xorriso -as mkisofs \
-    -b isolinux/isolinux.bin \
-    -c isolinux/boot.cat \
-    -no-emul-boot \
-    -boot-load-size 4 \
-    -boot-info-table \
-    -eltorito-alt-boot \
-    -e boot/grub/efi.img \
-    -no-emul-boot \
-    -isohybrid-gpt-basdat \
-    -J -R -V "vibeopsOS" \
-    -o "$ISO_OUT" \
-    "$WORK_DIR"
+rm -rf "$ISO_OUT"
+if [ -f "$WORK_DIR/isolinux/isolinux.bin" ]; then
+    cp "$WORK_DIR/boot/grub/efi.img" "$WORK_DIR/boot/grub/efi.img.orig" 2>/dev/null || true
+    xorriso -as mkisofs \
+        -b isolinux/isolinux.bin \
+        -c isolinux/boot.cat \
+        -no-emul-boot \
+        -boot-load-size 4 \
+        -boot-info-table \
+        -eltorito-alt-boot \
+        -e boot/grub/efi.img \
+        -no-emul-boot \
+        -isohybrid-gpt-basdat \
+        -J -R -V "vibeopsOS" \
+        -o "$ISO_OUT" \
+        "$WORK_DIR"
+else
+    echo "[*] Creating EFI boot image..."
+    EFI_STAGING=$(mktemp -d)
+    cp -r "$WORK_DIR/efi" "$EFI_STAGING/"
+    if [ -d "$WORK_DIR/boot/grub" ]; then
+        cp -r "$WORK_DIR/boot/grub" "$EFI_STAGING/"
+    fi
+    EFI_SIZE=$(du -sk "$EFI_STAGING" | cut -f1)
+    EFI_SIZE=$((EFI_SIZE + 10000))
+    EFI_IMG="$WORK_DIR/boot/grub/efi.img"
+    mkdir -p "$(dirname "$EFI_IMG")"
+    dd if=/dev/zero of="$EFI_IMG" bs=1K count="$EFI_SIZE" status=none
+    mkfs.vfat "$EFI_IMG" >/dev/null 2>&1
+    mcopy -i "$EFI_IMG" -s "$EFI_STAGING/efi" :: >/dev/null 2>&1
+    rm -rf "$EFI_STAGING"
+    xorriso -as mkisofs \
+        -e boot/grub/efi.img \
+        -no-emul-boot \
+        -J -R -V "vibeopsOS" \
+        -o "$ISO_OUT" \
+        "$WORK_DIR"
+fi
 
 rm -rf "$WORK_DIR"
 
