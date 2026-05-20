@@ -7,7 +7,7 @@ ConditionPathExists=!/etc/vibeops-initialized
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/opt/vibeops/vibeops-init.sh
+ExecStart=/opt/vibeops-init.sh
 
 [Install]
 WantedBy=multi-user.target
