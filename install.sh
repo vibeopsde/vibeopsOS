@@ -41,8 +41,8 @@ else
 fi
 echo ""
 
-echo "[5/5] Starting OpenCode..."
+echo "[5/5] Done."
 cd "$PROJECT_DIR"
-echo "  cd $PROJECT_DIR && opencode"
 echo ""
-exec opencode
+echo "  Project ready: $PROJECT_DIR"
+echo "  To start: opencode"
