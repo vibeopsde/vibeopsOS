@@ -11,8 +11,10 @@ vibeopsOS is not affiliated with, endorsed by, or connected to the OpenCode proj
 ```bash
 git clone https://github.com/vibeopsde/vibeopsOS.git
 cd vibeopsOS/build
-sudo ./build-iso.sh        # → vibeopsOS_vYYMMDDHH.iso
-sudo dd if=vibeopsOS_v*.iso of=/dev/sdX bs=4M
+sudo ./build-arm64.sh     # → iso/vibeopsOS-arm64_vYYMMDDHH.iso
+# or
+sudo ./build-x64.sh       # → iso/vibeopsOS-amd64_vYYMMDDHH.iso
+sudo dd if=iso/vibeopsOS-*.iso of=/dev/sdX bs=4M
 # Boot, install Ubuntu, login — setup runs automatically.
 ```
 
@@ -49,7 +51,9 @@ sudo dd if=vibeopsOS_v*.iso of=/dev/sdX bs=4M
 ```
 .
 ├── build/
-│   └── build-iso.sh           # Downloads Ubuntu ISO, patches squashfs, repacks
+│   ├── build-iso.sh           # Core builder (ARM64 & x64)
+│   ├── build-arm64.sh         # ARM64 thin wrapper
+│   ├── build-x64.sh           # x64 thin wrapper
 ├── package/
 │   ├── vibeops-init.sh        # Profile.d first-login script
 │   ├── vibeops.service        # (deprecated) legacy systemd unit

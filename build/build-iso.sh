@@ -1,21 +1,28 @@
 #!/bin/bash
 set -e
 
+ARCH="${1:-arm64}"
+
+case "$ARCH" in
+    arm64)  ISO_URL="https://cdimage.ubuntu.com/releases/26.04/release/ubuntu-26.04-live-server-arm64.iso" ;;
+    amd64)  ISO_URL="https://cdimage.ubuntu.com/releases/26.04/release/ubuntu-26.04-live-server-amd64.iso" ;;
+    *)      echo "ERROR: unknown arch: $ARCH (use arm64 or amd64)"; exit 1 ;;
+esac
+
 TIMESTAMP=$(date +%y%m%d%H)
-ISO_URL="https://cdimage.ubuntu.com/releases/26.04/release/ubuntu-26.04-live-server-arm64.iso"
 BASE_ISO_NAME=$(basename "$ISO_URL")
-WORK_DIR="/tmp/vibeops-build"
-SQUASHFS_DIR="/tmp/vibeops-squashfs"
-ISO_MOUNT="/tmp/vibeops-iso-mount"
+WORK_DIR="/tmp/vibeops-build-$ARCH"
+SQUASHFS_DIR="/tmp/vibeops-squashfs-$ARCH"
+ISO_MOUNT="/tmp/vibeops-iso-mount-$ARCH"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 ISO_DIR="$REPO_ROOT/iso"
 BASE_ISO="$ISO_DIR/$BASE_ISO_NAME"
-ISO_OUT="$ISO_DIR/vibeopsOS_v${TIMESTAMP}.iso"
+ISO_OUT="$ISO_DIR/vibeopsOS-${ARCH}_v${TIMESTAMP}.iso"
 
 mkdir -p "$ISO_DIR"
 
-echo "[*] Building viveopsOS ISO"
+echo "[*] Building viveopsOS ISO ($ARCH)"
 
 command -v wget       >/dev/null 2>&1 || { echo "ERROR: wget required"; exit 1; }
 command -v xorriso     >/dev/null 2>&1 || { echo "ERROR: xorriso required"; exit 1; }
@@ -77,7 +84,7 @@ cd "$OLDPWD"
 echo "[*] Creating ISO..."
 rm -rf "$ISO_OUT"
 
-ISO_VOLID="vibeopsOS"
+ISO_VOLID="vibeopsOS-${ARCH}"
 if [ -f "$WORK_DIR/isolinux/isolinux.bin" ]; then
     xorriso -as mkisofs \
         -b isolinux/isolinux.bin \
