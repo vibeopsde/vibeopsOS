@@ -9,7 +9,7 @@ case "$ARCH" in
     *)      echo "ERROR: unknown arch: $ARCH (use arm64 or amd64)"; exit 1 ;;
 esac
 
-TIMESTAMP=$(date +%y%m%d%H)
+GIT_TAG=$(git describe --tags --always 2>/dev/null || echo "untagged")
 BASE_ISO_NAME=$(basename "$ISO_URL")
 WORK_DIR="/tmp/vibeops-build-$ARCH"
 SQUASHFS_DIR="/tmp/vibeops-squashfs-$ARCH"
@@ -18,7 +18,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 ISO_DIR="$REPO_ROOT/iso"
 BASE_ISO="$ISO_DIR/$BASE_ISO_NAME"
-ISO_OUT="$ISO_DIR/vibeopsOS-${ARCH}_v${TIMESTAMP}.iso"
+ISO_OUT="$ISO_DIR/vibeopsOS-${ARCH}_v${GIT_TAG}.iso"
 
 mkdir -p "$ISO_DIR"
 
