@@ -5,7 +5,7 @@ ARCH="${1:-arm64}"
 
 case "$ARCH" in
     arm64)  ISO_URL="https://cdimage.ubuntu.com/releases/26.04/release/ubuntu-26.04-live-server-arm64.iso" ;;
-    amd64)  ISO_URL="https://cdimage.ubuntu.com/releases/26.04/release/ubuntu-26.04-live-server-amd64.iso" ;;
+    amd64)  ISO_URL="https://releases.ubuntu.com/26.04/ubuntu-26.04-live-server-amd64.iso" ;;
     *)      echo "ERROR: unknown arch: $ARCH (use arm64 or amd64)"; exit 1 ;;
 esac
 
