@@ -9,10 +9,7 @@ echo "============================================"
 echo "  vibeopsOS - First Time Setup"
 echo "============================================"
 
-sudo -k
-sudo bash -c "echo '$USER ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/vibeops && chmod 0440 /etc/sudoers.d/vibeops"
-echo "[*] Passwordless sudo enabled"
-
+echo "[*] Cloning vibeopsOS..."
 REPO_DIR="$HOME/vibeopsOS"
 if [ ! -d "$REPO_DIR" ]; then
     git clone https://github.com/vibeopsde/vibeopsOS.git "$REPO_DIR"

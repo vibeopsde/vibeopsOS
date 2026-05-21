@@ -7,11 +7,16 @@ echo "  Welcome to VibeOps — Onboarding"
 echo "============================================"
 echo ""
 
-echo "[1/5] Installing OpenCode..."
+echo "[1/6] Enabling passwordless sudo..."
+sudo -k
+sudo bash -c "echo '$USER ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/vibeops && chmod 0440 /etc/sudoers.d/vibeops"
+echo ""
+
+echo "[2/6] Installing OpenCode..."
 curl -fsSL https://opencode.ai/install | bash
 echo ""
 
-echo "[2/5] Project setup"
+echo "[3/6] Project setup"
 read -p "  Project name (default: my-project): " PROJECT
 PROJECT="${PROJECT:-my-project}"
 PROJECT_DIR="$HOME/$PROJECT"
@@ -19,13 +24,13 @@ mkdir -p "$PROJECT_DIR"
 echo "  Created: $PROJECT_DIR"
 echo ""
 
-echo "[3/5] Warning"
+echo "[4/6] Warning"
 echo "  The vibeopsOS agent has sudo without password enabled."
 echo "  It can install packages, modify system config, and run"
 echo "  administrative commands on this machine."
 echo ""
 
-echo "[4/5] Choose agent mode:"
+echo "[5/6] Choose agent mode:"
 echo "  [1] Safe   — asks before every sudo command"
 echo "  [2] Trust  — works autonomously with full sudo"
 read -p "  Choice [1]: " MODE
@@ -41,7 +46,7 @@ else
 fi
 echo ""
 
-echo "[5/5] Done."
+echo "[6/6] Done."
 cd "$PROJECT_DIR"
 echo ""
 echo "  Project ready: $PROJECT_DIR"
