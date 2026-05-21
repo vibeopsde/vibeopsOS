@@ -2,14 +2,18 @@
 set -e
 
 TIMESTAMP=$(date +%y%m%d%H)
-ISO_OUT="vibeopsOS_v${TIMESTAMP}.iso"
 ISO_URL="https://cdimage.ubuntu.com/releases/26.04/release/ubuntu-26.04-live-server-arm64.iso"
+BASE_ISO_NAME=$(basename "$ISO_URL")
 WORK_DIR="/tmp/vibeops-build"
 SQUASHFS_DIR="/tmp/vibeops-squashfs"
 ISO_MOUNT="/tmp/vibeops-iso-mount"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
-BASE_ISO="$REPO_ROOT/ubuntu.iso"
+ISO_DIR="$REPO_ROOT/iso"
+BASE_ISO="$ISO_DIR/$BASE_ISO_NAME"
+ISO_OUT="$ISO_DIR/vibeopsOS_v${TIMESTAMP}.iso"
+
+mkdir -p "$ISO_DIR"
 
 echo "[*] Building viveopsOS ISO"
 
