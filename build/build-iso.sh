@@ -9,7 +9,7 @@ case "$ARCH" in
     *)      echo "ERROR: unknown arch: $ARCH (use arm64 or amd64)"; exit 1 ;;
 esac
 
-GIT_TAG=$(git describe --tags --always 2>/dev/null || echo "untagged")
+GIT_TAG=$(git describe --tags --always 2>/dev/null | sed 's/^v//; s/-[0-9]*-g[0-9a-z]*$//' || echo "untagged")
 BASE_ISO_NAME=$(basename "$ISO_URL")
 WORK_DIR="/tmp/vibeops-build-$ARCH"
 SQUASHFS_DIR="/tmp/vibeops-squashfs-$ARCH"
