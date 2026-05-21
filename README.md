@@ -25,7 +25,13 @@ After installing Ubuntu and logging in, the vibeopsOS onboarding starts automati
 ## Onboarding (First Login)
 
 ```
-  Welcome to VibeOps — Onboarding
+  vibeopsOS — First Time Setup
+  ──────────────────────────────
+  Choose version:
+    [0] latest (main branch)
+    [1] v2605.0
+
+  → Welcome to VibeOps — Onboarding
   ─────────────────────────────────
   [1/6] Enable passwordless sudo      (one-time password prompt)
   [2/6] Install OpenCode              (via https://opencode.ai/install)
@@ -37,13 +43,14 @@ After installing Ubuntu and logging in, the vibeopsOS onboarding starts automati
   [6/6] AGENTS.md copied to project. Ready.
 ```
 
-The setup runs once via `/etc/profile.d/vibeops-init.sh`. It clones this repo to `~/vibeopsOS/` and executes `install.sh`. A sentinel file `~/.vibeops-initialized` prevents re-runs.
+The setup runs once via `/etc/profile.d/vibeops-init.sh`. On first login you can pick a specific git tag or the latest main branch. The repo is cloned to `~/vibeopsOS/` and `install.sh` is executed. A sentinel file `~/.vibeops-initialized` prevents re-runs.
 
 ## Features
 
 - **OpenCode installed on first login** — no manual setup required
 - **Passwordless sudo** — configured automatically (one-time sudo prompt)
 - **Safe / Trust agent modes** — choose whether the agent asks before sudo or works autonomously
+- **Version pinning** — pick a specific git tag or always get the latest main
 - **Clean onboarding** — interactive setup with project creation
 
 ## Build Requirements
