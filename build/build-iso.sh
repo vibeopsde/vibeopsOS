@@ -30,6 +30,7 @@ command -v unsquashfs  >/dev/null 2>&1 || { echo "ERROR: squashfs-tools required
 command -v mksquashfs  >/dev/null 2>&1 || { echo "ERROR: squashfs-tools required"; exit 1; }
 command -v rsync       >/dev/null 2>&1 || { echo "ERROR: rsync required"; exit 1; }
 
+sudo umount "$ISO_MOUNT" 2>/dev/null || true
 rm -rf "$WORK_DIR" "$SQUASHFS_DIR" "$ISO_MOUNT"
 mkdir -p "$WORK_DIR" "$SQUASHFS_DIR" "$ISO_MOUNT"
 
