@@ -88,6 +88,13 @@ The setup runs once via `/etc/profile.d/vibeops-init.sh`. On first login you can
 - `package/templates/agents-safe.md` — agent instructions for Safe mode
 - `package/templates/agents-trust.md` — agent instructions for Trust mode
 - `build/build-iso.sh` — ISO build logic (arch detection, squashfs patching, repack)
+- `build/deploy.sh` — copy iso/ to web root
+
+## Deployment
+
+```bash
+sudo ./build/deploy.sh   # Copy iso/ → /var/www/html/ISO/
+```
 
 ## License
 
