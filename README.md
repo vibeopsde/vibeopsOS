@@ -13,8 +13,8 @@ git clone https://github.com/vibeopsde/vibeopsOS.git
 cd vibeopsOS/build
 
 # Build for your architecture:
-sudo ./build-arm64.sh     # → iso/vibeopsOS-arm64_vYYMMDDHH.iso
-sudo ./build-x64.sh       # → iso/vibeopsOS-amd64_vYYMMDDHH.iso
+sudo ./build-arm64.sh     # → iso/vibeopsOS-arm64_v<TAG>.iso
+sudo ./build-x64.sh       # → iso/vibeopsOS-amd64_v<TAG>.iso
 
 # Flash and boot:
 sudo dd if=iso/vibeopsOS-*.iso of=/dev/sdX bs=4M status=progress
@@ -66,7 +66,8 @@ The setup runs once via `/etc/profile.d/vibeops-init.sh`. On first login you can
 ├── build/
 │   ├── build-iso.sh              # Core ISO builder (accepts arch as argument)
 │   ├── build-arm64.sh            # ARM64 thin wrapper
-│   └── build-x64.sh              # AMD64 thin wrapper
+│   ├── build-x64.sh              # AMD64 thin wrapper
+│   └── deploy.sh                 # Copy iso/ → /var/www/html/ISO
 ├── package/
 │   ├── vibeops-init.sh           # /etc/profile.d/ first-login script
 │   ├── vibeops.service           # (deprecated) legacy systemd unit
